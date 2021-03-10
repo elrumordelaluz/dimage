@@ -45,7 +45,7 @@ if (argv.dir) {
     width: argv.w,
     heigth: argv.h,
     suffix: argv.s,
-    avoidRepeat: argv.a.trim() === '' ? true : argv.a.trim(),
+    avoidRepeat: argv.a ? (argv.a.trim() === '' ? true : argv.a.trim()) : false,
   }).then((total) => {
     if (!argv.quiet) {
       spinner.succeed(`Transformed ${total} images successfully`)
