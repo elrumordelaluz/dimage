@@ -30,17 +30,25 @@ const argv = yargs
     alias: 'quiet',
     describe: 'Quiet output',
     type: 'boolean',
+  })
+  .option('a', {
+    alias: 'avoid',
+    describe: 'Avoid specific suffix',
+    type: 'string',
   }).argv
 
 if (argv.dir) {
   if (!argv.quiet) {
     spinner.start(`Transforming images`)
   }
-  dirmages(argv.dir, { width: argv.w, heigth: argv.h, suffix: argv.s }).then(
-    () => {
-      if (!argv.quiet) {
-        spinner.succeed(`Transforming images done`)
-      }
+  dirmages(argv.dir, {
+    width: argv.w,
+    heigth: argv.h,
+    suffix: argv.s,
+    avoidRepeat: argv.a.trim() === '' ? true : argv.a.trim(),
+  }).then((total) => {
+    if (!argv.quiet) {
+      spinner.succeed(`Transformed ${total} images successfully`)
     }
-  )
+  })
 }

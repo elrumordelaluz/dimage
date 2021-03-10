@@ -5,8 +5,15 @@ const sharp = require('sharp')
 
 async function dirmages(
   dir,
-  { width = null, heigth = null, options = {}, suffix = '-alt' } = {}
+  {
+    width = null,
+    heigth = null,
+    options = {},
+    suffix = '-alt',
+    avoidRepeat = false,
+  } = {}
 ) {
+  let total = 0
   try {
     for await (const { fullPath } of readdirp(dir)) {
       if (isImage(fullPath)) {
@@ -14,9 +21,20 @@ async function dirmages(
         const dir = dirname(fullPath)
         const name = basename(fullPath, ext)
         const dest = join(dir, `${name}${suffix}${ext}`)
-        await sharp(fullPath).resize(width, heigth, options).toFile(dest)
+
+        if (
+          !avoidRepeat ||
+          (avoidRepeat &&
+            !name.endsWith(
+              typeof avoidRepeat === 'string' ? avoidRepeat : suffix
+            ))
+        ) {
+          await sharp(fullPath).resize(width, heigth, options).toFile(dest)
+          total++
+        }
       }
     }
+    return total
   } catch (err) {
     console.log(err)
   }
